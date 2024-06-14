@@ -1,0 +1,67 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CarStatus {
+  AVAILABLE
+  SOLD
+  RESERVED
+  PINNED
+}
+
+enum AppointmentStatus {
+  PENDING
+  VALIDATED
+  REJECTED
+  ARCHIVED
+}
+
+model Car {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  brand       String?
+  model       String?
+  price       Float?
+  color       String?
+  motorType   String?
+  power       String?
+  placeNumber String?
+  status      CarStatus
+  type        String
+  images      Image[]
+  appointments Appointment[]
+}
+
+model Image {
+  id     String  @id @default(uuid())
+  url    String
+  car    Car     @relation(fields: [carId], references: [id])
+  carId  String
+}
+
+model Appointment {
+  id              String           @id @default(uuid())
+  car             Car              @relation(fields: [carId], references: [id])
+  carId           String
+  name            String
+  firstName       String?
+  email           String
+  message         String?
+  contact         String?
+  appointmentDate DateTime?
+  status          AppointmentStatus
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+  name     String?
+}
